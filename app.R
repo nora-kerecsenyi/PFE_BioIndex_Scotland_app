@@ -72,6 +72,11 @@ combined.long <- combined %>%
   select(-c(SCOBJECTID, OBJECTID)) %>%
   pivot_longer(-c(Year, Region), names_to = "variable", values_to = "value")
 
+
+
+
+# * T-tests and summary stats ----
+
 # run t-tests for Scotland
 stat.test <- combined.long %>%
   group_by(variable) %>%
@@ -79,8 +84,6 @@ stat.test <- combined.long %>%
   adjust_pvalue(method = "BH") %>%
   add_significance()
 
-
-# * T-tests and summary stats ----
 # run t-tests for regions
 stat.test.Central <- combined.long %>%
   filter(Region == "Central Region" & 
@@ -198,11 +201,11 @@ results.regions <- left_join(stat.test.regions, sum_stats_regions, by = c("varia
 FLS <- readOGR("./Inputs/regions.shp")
 
 # re-name regions to match the polygons
-FLS@data$Region_nam[FLS@data$Region_nam  == "Central_lowlands"] <- "Central Region"
-FLS@data$Region_nam[FLS@data$Region_nam  == "West"]  <- "West Region"
-FLS@data$Region_nam[FLS@data$Region_nam  == "North_Scotland"]  <- "North Region"
-FLS@data$Region_nam[FLS@data$Region_nam  == "Moray, Aberdeenshire, and Tay"]  <- "East Region"
-FLS@data$Region_nam[FLS@data$Region_nam  == "Dumfries_borders_Galloway"]  <- "South Region"
+# FLS@data$Region_nam[FLS@data$Region_nam  == "Central_lowlands"] <- "Central Region"
+# FLS@data$Region_nam[FLS@data$Region_nam  == "West"]  <- "West Region"
+# FLS@data$Region_nam[FLS@data$Region_nam  == "North_Scotland"]  <- "North Region"
+# FLS@data$Region_nam[FLS@data$Region_nam  == "Moray, Aberdeenshire, and Tay"]  <- "East Region"
+# FLS@data$Region_nam[FLS@data$Region_nam  == "Dumfries_borders_Galloway"]  <- "South Region"
 
 
 # change coordinate reference system to be compatible with leaflet mapping
@@ -259,7 +262,7 @@ body <- dashboardBody(
                          p("National forestry bodies have a statutory duty to take steps to further the conservation of biodiversity. To help evidence the impact of management and policies, we have co-developed an evidence based, transparent and repeatable approach for assessing the biodiversity potential of the NationalForest Estate with Forestry & Land Scotland and Forestry England, using primarily the public forestry bodies' forest inventory data."),
                          p("A number of metrics capturing different aspects of woodland biodiversity were generated and grouped into the following four biodiversity indicator types: i) diversity, ii) extent, iii) condition, and iv) connectivity (see Theoretical framework on the figure below."),
                          p("Using survey data on forest and habitat structure, these metrics are assigned to individual forest stands to enable reporting at regional and national scales. The resulting index can then be used to inform locally targeted action, national long-term monitoring and objective reporting."),
-                         tags$img(src = "framework_Scotland.png"),
+                         tags$img(src = "framework_Scotland.png", height="80%", width="80%"),
                          style = "font-size: 16px")))),
     
     
