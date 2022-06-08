@@ -4,20 +4,12 @@ library(fresh)
 library(shiny)
 library(shinydashboard)
 library(shinyjs)
-library(rgdal)
 library(rgeos)
-#library(sf)
-library(sp)
 library(leaflet)
 library(DT)
 library(htmltools)
 library(htmlwidgets)
-library(scales)
-library(gapminder)
-library(forcats)
 library(ggplot2)
-library(gridExtra)
-library(fmsb)
 library(plotly)
 library(tidyr)
 library(tidyverse)
@@ -527,7 +519,7 @@ server <- function(input, output) {
     
     fig <- fig %>%
       layout(
-        title = as.character(input$indicator_region),
+        title = as.character(input$Bioindex_region),
         xaxis = list(title = "Year"),
         yaxis = list(title = "Combined Biodiversity Index",
                      zeroline = F))
