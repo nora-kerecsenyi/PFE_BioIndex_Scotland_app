@@ -216,7 +216,7 @@ header <- dashboardHeader(title = strong("Biodiversity Index change over time - 
                                   tags$style(".main-header {max-height: 70px}"),
                                   tags$style(".main-header .logo {height: 59px}"),
                                   tags$li(a(href = 'https://www.forestresearch.gov.uk/',
-                                            img(src = 'frlogo.png'),
+                                            img(src = 'frlogo.PNG'),
                                             style = "padding-top:0px; padding-bottom:0px;"),
                                           class = "dropdown")))
 
@@ -235,7 +235,7 @@ sidebar <- dashboardSidebar(width = 200,
                                         menuItem("Metrics", tabName = "metrics")),
                             
                             
-                            tags$img(src = "tree_Scotland.png", height="90%", width="90%",
+                            tags$img(src = "tree_Scotland.PNG", height="90%", width="90%",
                                      style = "display: block; margin-left: auto; margin-right: auto; margin-top: 400px;"))
 
 
