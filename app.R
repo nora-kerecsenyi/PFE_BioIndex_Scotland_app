@@ -200,13 +200,6 @@ results.regions <- left_join(stat.test.regions, sum_stats_regions, by = c("varia
 # regions shapefile
 FLS <- readOGR("./Inputs/regions.shp")
 
-# re-name regions to match the polygons
-# FLS@data$Region_nam[FLS@data$Region_nam  == "Central_lowlands"] <- "Central Region"
-# FLS@data$Region_nam[FLS@data$Region_nam  == "West"]  <- "West Region"
-# FLS@data$Region_nam[FLS@data$Region_nam  == "North_Scotland"]  <- "North Region"
-# FLS@data$Region_nam[FLS@data$Region_nam  == "Moray, Aberdeenshire, and Tay"]  <- "East Region"
-# FLS@data$Region_nam[FLS@data$Region_nam  == "Dumfries_borders_Galloway"]  <- "South Region"
-
 
 # change coordinate reference system to be compatible with leaflet mapping
 FLS <- spTransform(FLS, CRS("+proj=longlat +datum=WGS84 +no_defs"))
