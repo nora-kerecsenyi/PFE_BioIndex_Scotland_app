@@ -387,7 +387,7 @@ server <- function(input, output) {
     pal <- colorNumeric(palette = "RdYlGn",
                         domain = FLS_map$difference)
     
-    leaflet() %>%
+    leaflet(options = leafletOptions(zoomControl= FALSE)) %>%
       addProviderTiles("Stamen.TonerLite") %>%
       setView(lng = -3 , lat = 57, zoom = 6) %>%
       addPolygons(data = FLS_map,
@@ -738,7 +738,7 @@ server <- function(input, output) {
     pal <- colorNumeric(palette = "RdYlGn",
                         domain = FLS_map$difference)
     
-    leaflet() %>%
+    leaflet(options = leafletOptions(zoomControl= FALSE)) %>%
       addProviderTiles("Stamen.TonerLite") %>%
       setView(lng = -3 , lat = 57, zoom = 6) %>%
       addPolygons(data = FLS_map,
