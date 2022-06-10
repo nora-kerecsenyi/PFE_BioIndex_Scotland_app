@@ -320,6 +320,7 @@ body <- dashboardBody(
                                      h4(strong("Select indicator group")), 
                                      choices = names(combined[,22:27]),
                                      selected = "Landscape Biodiversity Indicator"),
+                         textOutput("indicator_definition"),
                          checkboxGroupInput("indicator_year", 
                                             h4(strong("Select years to compare")), 
                                             choices = c("2011", "2019", "2020", "2021"),
@@ -329,12 +330,11 @@ body <- dashboardBody(
                                      h4(strong("Select region for plotting")), 
                                      choices = unique(combined$Region), 
                                      selected = "Central Region")),
-                     
                      box(width = NULL,
                          leafletOutput("indicator_map"))),
               
               
-              # Row 1, Column 3 
+              # Row 1, Column 2 
               column(width = 8,
                      box(width = NULL,
                          tabsetPanel(type = "tabs",
@@ -678,6 +678,48 @@ server <- function(input, output) {
     
   })  
   
+  
+  
+  # *Indicator definitions----
+  output$indicator_definition <- renderText({
+    if (input$select_indicator == "Landscape Biodiversity Indicator") {
+      paste("A single score resulting from the combination of the landscape biodiversity metrics. Each Region
+        receives a single score, so all subcompartments falling within a Region receive the same score. 
+        Values can range from 0 to 1 (low biodiversity score - high score) for the baseline year (2019). 
+        Results from data for other years or scenarios can result in scores above or below this 0-1 range, 
+        as these are calculated relative to the baseline year to highlight the direction of change.")
+    } else if (input$select_indicator == "Local Biodiversity Indicator") {
+      paste("A single score resulting from the combination of the Local Extent, Diversity, Condition and Connectivity
+        Indicators. Each subcompartment receives a single score. Values can range from 0 to 1 (low biodiversity
+        score - high score) for the baseline year (2019). Results from data for other years or scenarios can
+        result in scores above or below this 0-1 range, as these are calculated relative to the baseline year 
+        to highlight the direction of change.")
+    } else if (input$select_indicator == "Diversity Indicator") {
+      paste("A single score resulting from the combination of all the local biodiveristy metrics within the 
+        Diversity Indicator Group. Each subcompartment receives a single score. Values can range from 0 to 1 
+        (low diversity - high diversity) for the baseline year (2019). Results from data for other years or
+        scenarios can result in scores above or below this 0-1 range, as these are calculated relative to the
+        baseline year to highlight the direction of change.")
+    } else if (input$select_indicator == "Condition Indicator") {
+      paste("A single score resulting from the combination of all the local biodiveristy metrics within the 
+        Condition Indicator Group. Each subcompartment receives a single score. Values can range from 0 to 1 
+        (poor condition - good condition) for the baseline year (2019). Results from data for other years or
+        scenarios can result in scores above or below this 0-1 range, as these are calculated relative to the
+        baseline year to highlight the direction of change.")
+    } else if (input$select_indicator == "Connectivity Indicator") {
+      paste("A single score resulting from the combination of all the local biodiveristy metrics within the 
+        Connectivity Indicator Group. Each subcompartment receives a single score. Values can range from 0 
+        to 1 (low connectivity - high connectivity) for the baseline year (2019). Results from data for other
+        years or scenarios can result in scores above or below this 0-1 range, as these are calculated relative 
+        to the baseline year to highlight the direction of change.")
+    } else if (input$select_indicator == "Extent Indicator") {
+      paste("A single score resulting from the combination of all the local biodiveristy metrics within the 
+        Extent Indicator Group*. Each subcompartment receives a single score. Values can range from 0 to 1 
+        (low extent - high extent) for the baseline year (2019). Results from data for other years or 
+        scenarios can result in scores above or below this 0-1 range, as these are calculated relative to the
+        baseline year to highlight the direction of change. *At this time, the 'core area' metric is the only
+        Local Extent Indicator and so these results are analogous.")}
+  })
   
   
   # *Indicators map----
