@@ -195,6 +195,7 @@ results.regions <- left_join(stat.test.regions, sum_stats_regions, by = c("varia
   as.data.frame()
 
 
+
 # * Shapefiles ----
 
 # regions shapefile
@@ -422,8 +423,10 @@ server <- function(input, output) {
     
     
     # Create a palette function
-    pal <- colorNumeric(palette = "RdYlGn",
-                        domain = FLS_map$difference)
+    bins <- seq(-0.6, 0.8, 0.2)
+    pal <- colorBin(palette = "RdYlGn",
+                    domain = FLS_map$difference,
+                    bins = bins)
     
     leaflet(options = leafletOptions(zoomControl= FALSE)) %>%
       addProviderTiles("Stamen.TonerLite") %>%
@@ -773,8 +776,11 @@ server <- function(input, output) {
     
     
     # Create a palette function
-    pal <- colorNumeric(palette = "RdYlGn",
-                        domain = FLS_map$difference)
+    bins <- seq(-0.6, 0.8, 0.2)
+    pal <- colorBin(palette = "RdYlGn",
+                    domain = FLS_map$difference,
+                    bins = bins)
+    
     
     leaflet(options = leafletOptions(zoomControl= FALSE)) %>%
       addProviderTiles("Stamen.TonerLite") %>%
@@ -1482,31 +1488,31 @@ server <- function(input, output) {
               the baseline year to highlight the direction of change.")
       } else if (input$select_metric == "Subcompartment type diversity") {
         paste("The effective number of woodland types that subcompartments are classified into across individual woodland block 
-              boundaries, normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from ata for other
+              boundaries, normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from data for other
               years or scenarios can result in scores above or below this 0-1 range, as these are calculated relative to the baseline
               year to highlight the direction of change.")
       } else if (input$select_metric == "Topographic roughness") {
         paste("The variability of the topographic surface across the subcomapartment and block woodland, normalised to a 0-1 scale (low
-              score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores 
+              score - high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores 
               above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of 
               change.")
       } else if (input$select_metric == "Tree size (dbh) diversity") {
-        paste("The standard deviation of tree diameters at breast height across the subcomapartment and block woodland, normalised to a 
+        paste("The standard deviation of tree diameters at breast height across the subcomapartment and block woodland, normalised to a
               0-1 scale (low score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result
               in scores above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction
               of change.")
       } else if (input$select_metric == "Tree species diversity") {
-        paste("The effective number of tree species across the subcompartment and block woodland, normalised to a  0-1 scale (low score 
-              - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores above or
+        paste("The effective number of tree species across the subcompartment and block woodland, normalised to a  0-1 scale (low score
+              - high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores above or
               below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of change.")
       } else if (input$select_metric == "Tree age diversity") {
         paste("The effective number of tree age bands across the subcompartment and block woodland, normalised to a  0-1 scale (low 
-              score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores 
+              score - high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores 
               above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of 
               change.")
       } else if (input$select_metric == "Vertical complexity") {
-        paste("The effective number of tree height bands across the subcomapartment and block woodland, normalised to a  0-1 scale (low 
-              score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores 
+        paste("The effective number of tree height bands across the subcomapartment and block woodland, normalised to a  0-1 scale (low
+              score - high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores 
               above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of 
               change.")
       }
@@ -1525,8 +1531,11 @@ server <- function(input, output) {
       
       
       # Create a palette function
-      pal <- colorNumeric(palette = "RdYlGn",
-                          domain = FLS_map$difference)
+      bins <- seq(-0.6, 0.8, 0.2)
+      pal <- colorBin(palette = "RdYlGn",
+                      domain = FLS_map$difference,
+                      bins = bins)
+      
       
     
       leaflet(options = leafletOptions(zoomControl= FALSE)) %>%
