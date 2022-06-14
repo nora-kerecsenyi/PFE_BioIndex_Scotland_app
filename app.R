@@ -315,7 +315,7 @@ body <- dashboardBody(
             fluidRow(
               column(width = 4,
                      box(width = NULL,
-                         height = '450px',
+                         height = '500px',
                          selectInput("select_indicator", 
                                      h4(strong("Select indicator group")), 
                                      choices = names(combined[,22:27]),
