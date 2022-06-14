@@ -357,7 +357,45 @@ body <- dashboardBody(
     
     
     # Tab 4
-    tabItem(tabName = "metrics")))
+    tabItem(tabName = "metrics",
+            # Row 1, Column 1
+            fluidRow(
+              column(width = 4,
+                     box(width = NULL,
+                         height = '450px',
+                         selectInput("select_metric", 
+                                     h4(strong("Select metric")), 
+                                     choices = names(combined[,4:21]),
+                                     selected = "Tree age diversity"),
+                         textOutput("metric_definition"),
+                         checkboxGroupInput("metric_year", 
+                                            h4(strong("Select years to compare")), 
+                                            choices = c("2011", "2019", "2020", "2021"),
+                                            selected = c("2011", "2019"),
+                                            inline = TRUE),
+                         selectInput("metric_region", 
+                                     h4(strong("Select region for plotting")), 
+                                     choices = unique(combined$Region), 
+                                     selected = "Central Region")),
+                     box(width = NULL,
+                         leafletOutput("metric_map"))),
+              
+              
+              # Row 1, Column 2 
+              column(width = 8,
+                     box(width = NULL,
+                         tabsetPanel(type = "tabs",
+                                     tabPanel("Scotland",  DT::DTOutput("metric_table_Scotland"), 
+                                              style = "overflow-x: scroll;"),
+                                     tabPanel("Regions",  DT::DTOutput("metric_table_regions"), 
+                                              style = "overflow-x: scroll;"))),
+                     
+                     box(width = NULL,    
+                         tabsetPanel(type = "tabs",
+                                     tabPanel("Metric Violin plot",
+                                              tabsetPanel(type = "tabs",
+                                                          tabPanel("Scotland",  plotlyOutput("violin_metric_Scotland")),
+                                                          tabPanel("Regions",  plotlyOutput("violin_metric_regions")))))))))))
 
 
 
@@ -1381,6 +1419,265 @@ server <- function(input, output) {
       
     })  
     
+  # *Metrics definitions----
+
+    output$metric_definition <- renderText({
+      if (input$select_metric == "Woodland cover") {
+        paste("The proportion of all woodland cover (publicly and privately owned) across the landscapenormalised to a 0-1 scale (low 
+              score - high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores 
+              above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction 
+              of change.")
+      } else if (input$select_metric == "Woodland size diversity") {
+        paste("The standard deviation of woodland size values for block woodlands across the landscape, normalised to a 0-1 scale (low 
+              score - high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores 
+              above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction 
+              of change.")
+      } else if (input$select_metric == "Landcover diversity") {
+        paste("The effective number of non-woodland landcover types across the landscape (according to LandCoverMap 2019), normalised 
+              to a 0-1 scale (low score - high score) for the baseline year (2019). Results from data for other years or scenarios 
+              can result in scores above or below this 0-1 range, as these are calculated relative to the baseline year to highlight 
+              the direction of change.")
+      } else if (input$select_metric == "Woodland connectivity") {
+        paste("Connectivity of a block woodland to all other woodlands (public and private) according to a Euclidean distance 
+              connectivity indicator that accounts for the size and distance of surrounding woodlands. Connectivity here is provided 
+              in the form of a score, normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from 
+              data for other years or scenarios can result in scores above or below this 0-1 range, as these are calculated relative 
+              to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Matrix permeability") {
+        paste("Percentage cover of favourable landcover within the ecological neighbourhood, normalised to a 0-1 scale (low score - 
+              high score) for the baseline year (2019). Results from data for other years or scenarios can result in scores above 
+              or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Niche condition") {
+        paste("The sum of species that the N4S model predicts could be potentially present in the sub-compartment, divided by the 
+              sum of the species in N4S whose ranges/envelopes overlap or intersect the sub-compartment. The resulting score is then
+              normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from data for other years or
+              scenarios can result in scores above or below this 0-1 range, as these are calculated relative to the baseline year to
+              highlight the direction of change.")
+      } else if (input$select_metric == "Deadwood volume") {
+        paste("Proportion of sub-compartment with deadwood > 20m2, normalised to a 0-1 scale (low score - high score) for the baseline
+              year (2019). Results from data for other years or scenarios can result in scores above or below this 0-1 range, as these
+              are calculated relative to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Native woodland cover") {
+        paste("The proportional cover of subcompartments classified as native woodland type across the block woodland, normalised to 
+              a 0-1 scale (low score - high score) for the baseline year (2019). Results from data for other years or scenarios can
+              result in scores above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the
+              direction of change.")
+      } else if (input$select_metric == "Open space cover") {
+        paste("The degree of gappiness in the canopy within a given subcompartment, normalised to a 0-1 scale (low score - high score)
+              for the baseline year (2019). Results from data for other years or scenarios can result in scores above or below this 
+              0-1 range, as these are calculated relative to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Oldest tree") {
+        paste("Age of oldest trees, normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from 
+              data for other years or scenarios can result in scores above or below this 0-1 range, as these are calculated relative 
+              to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Core area") {
+        paste("The area of the block woodland minus an internal buffer of 50m (ha), normalised to a 0-1 scale (low score - high score)
+              for the baseline year (2019). Results from data for other years or scenarios can result in scores above or below this 0-1
+              range, as these are calculated relative to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Niche diversity") {
+        paste("Effective number of niches of the Country list priority woodland species based on all species whose niches are predicted
+              to occur in sub-compartments within the Block woodland, after the range/envelope restrictions for species are applied.
+              The resulting score is then normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from
+              data for other years or scenarios can result in scores above or below this 0-1 range, as these are calculated relative to
+              the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Subcompartment type diversity") {
+        paste("The effective number of woodland types that subcompartments are classified into across individual woodland block 
+              boundaries, normalised to a 0-1 scale (low score - high score) for the baseline year (2019). Results from ata for other
+              years or scenarios can result in scores above or below this 0-1 range, as these are calculated relative to the baseline
+              year to highlight the direction of change.")
+      } else if (input$select_metric == "Topographic roughness") {
+        paste("The variability of the topographic surface across the subcomapartment and block woodland, normalised to a 0-1 scale (low
+              score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores 
+              above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of 
+              change.")
+      } else if (input$select_metric == "Tree size (dbh) diversity") {
+        paste("The standard deviation of tree diameters at breast height across the subcomapartment and block woodland, normalised to a 
+              0-1 scale (low score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result
+              in scores above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction
+              of change.")
+      } else if (input$select_metric == "Tree species diversity") {
+        paste("The effective number of tree species across the subcompartment and block woodland, normalised to a  0-1 scale (low score 
+              - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores above or
+              below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of change.")
+      } else if (input$select_metric == "Tree age diversity") {
+        paste("The effective number of tree age bands across the subcompartment and block woodland, normalised to a  0-1 scale (low 
+              score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores 
+              above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of 
+              change.")
+      } else if (input$select_metric == "Vertical complexity") {
+        paste("The effective number of tree height bands across the subcomapartment and block woodland, normalised to a  0-1 scale (low 
+              score - high score) for the baseline year (2019). Results from ata for other years or scenarios can result in scores 
+              above or below this 0-1 range, as these are calculated relative to the baseline year to highlight the direction of 
+              change.")
+      }
+      
+    })
+  # *Metrics map----
+    output$metric_map <- renderLeaflet({
+      
+      # bioindex differences
+      bioindex_diff <- subset(results.regions, variable == input$select_metric)
+      
+      # combine spatial polygons and regional change data frames
+      FLS_map <- FLS
+      FLS_map@data <- data.frame(FLS@data, bioindex_diff[match(FLS@data[,"Region_nam"], bioindex_diff[,"Region"]),])
+      
+      
+      
+      # Create a palette function
+      pal <- colorNumeric(palette = "RdYlGn",
+                          domain = FLS_map$difference)
+      
+    
+      leaflet(options = leafletOptions(zoomControl= FALSE)) %>%
+        addProviderTiles("Stamen.TonerLite") %>%
+        setView(lng = -3 , lat = 57, zoom = 6) %>%
+        addPolygons(data = FLS_map,
+                    weight = 1,
+                    color = "black",
+                    fillOpacity = 0.6,
+                    fillColor = ~pal(difference),
+                    label = ~paste0(Region, ", change: ", round(difference, 3)),
+                    highlight = highlightOptions(
+                      weight = 3, 
+                      color = "#612271",
+                      fillColor = "#612271", 
+                      fillOpacity = 0.3,
+                      bringToFront = TRUE)) %>%
+        addLegend("bottomright",
+                  pal = pal, 
+                  values = FLS_map$difference,
+                  title = paste("Change in", "<br/>", "metric"),
+                  opacity = 0.6)
+      
+    })
+  # *Table of stats for Scotland metrics ----
+    output$metric_table_Scotland <- DT::renderDT({
+      
+      DT::datatable(results.Scotland %>%
+                      rename("N 2011" = "n_2011", "N 2019" = "n_2019", 
+                             "mean 2011" = "mean_2011", "mean 2019" = "mean_2019",
+                             "standard deviation 2011" = "sd_2011", "standard deviation 2019" = "sd_2019",
+                             " p value" = "p.adj", "significance" = "p.adj.signif") %>%
+                      mutate_if(is.numeric, ~round(., 3)) %>%
+                      filter(variable %in% c("Native woodland cover", "Core area", "Oldest tree", "Woodland connectivity", 
+                                             "Matrix permeability", "Subcompartment type diversity", "Tree age diversity",
+                                             "Tree species diversity", "Tree size (dbh) diversity", "Vertical complexity",
+                                             "Open space cover", "Topographic roughness", "Deadwood volume", "Niche condition",
+                                             "Niche diversity", "Landcover", "Woodland size diversity", "Woodland cover")) %>%
+                      relocate(change, .after = variable) ,
+                    rownames = FALSE,
+                    extensions = c("Buttons"),
+                    options = list(
+                      paging = TRUE,
+                      searching = TRUE,
+                      fixedColumns = TRUE,
+                      autoWidth = TRUE,
+                      ordering = TRUE,
+                      dom = 'Bftsp',
+                      buttons = c('copy', 'csv', 'excel'))) %>%
+        formatStyle('change', 
+                    backgroundColor = styleEqual(unique(as.factor(results.Scotland$change)), 
+                                                 c('lightgreen', 'lightpink', 'lightgray')))
+      
+      
+    })
+  # *Table of stats for regional metrics ----
+    output$metric_table_regions<- DT::renderDT({
+      
+      DT::datatable(results.regions %>%
+                      mutate(p.adj = as.numeric(p.adj)) %>%
+                      rename("N 2011" = "n_2011", "N 2019" = "n_2019", 
+                             "mean 2011" = "mean_2011", "mean 2019" = "mean_2019",
+                             "standard deviation 2011" = "sd_2011", "standard deviation 2019" = "sd_2019",
+                             " p value" = "p.adj", "significance" = "p.adj.signif") %>%
+                      mutate_if(is.numeric, ~round(., 3)) %>%
+                      filter(variable %in% c("Native woodland cover", "Core area", "Oldest tree", "Woodland connectivity", 
+                                             "Matrix permeability", "Subcompartment type diversity", "Tree age diversity",
+                                             "Tree species diversity", "Tree size (dbh) diversity", "Vertical complexity",
+                                             "Open space cover", "Topographic roughness", "Deadwood volume", "Niche condition",
+                                             "Niche diversity", "Landcover", "Woodland size diversity", "Woodland cover")) %>%
+                      relocate(change, .after = variable) %>%
+                      select(-c(difference)),
+                    rownames = FALSE,
+                    extensions = c("Buttons"),
+                    options = list(
+                      pageLength = 6,
+                      searching = TRUE,
+                      autoWidth = TRUE,
+                      ordering = TRUE,
+                      dom = 'Bftsp',
+                      buttons = c('copy', 'csv', 'excel'))) %>%
+        formatStyle('change', 
+                    backgroundColor = styleEqual(unique(as.factor(results.regions$change)), 
+                                                 c('lightgreen', 'lightpink', 'lightgray')))
+    })
+  # *Violin plot for Scotland metrics ----
+    output$violin_metric_Scotland <- renderPlotly({
+      
+      violin_metric_Scotland <- shiny::reactive ({
+        req(input$select_metric)
+        combined %>% 
+          select(input$select_metric, Year)
+      })
+      
+      y_axis <- violin_metric_Scotland()[[input$select_metric]]
+      
+      fig <- violin_metric_Scotland() %>%
+        plot_ly(
+          x = ~Year,
+          y = ~y_axis,
+          split = ~Year,
+          color = ~Year,
+          colors = c( "#999999", "#008000"),
+          type = 'violin',
+          box = list(visible = T),
+          meanline = list(visible = T)) 
+      
+      fig <- fig %>%
+        layout(
+          xaxis = list(title = "Year"),
+          yaxis = list(title = as.character(input$select_metric),
+                       zeroline = F))
+      
+      fig
+      
+    })
+  # *Violin plot for regional indicators ----
+    output$violin_metric_regions <- renderPlotly({
+      
+      violin_metric_region <- shiny::reactive ({
+        req(input$select_metric)
+        req(input$metric_region)
+        combined %>% 
+          filter(Region %in% input$metric_region) %>%
+          select(input$select_metric, Year)  
+        
+      })
+      
+      y_axis <- violin_metric_region()[[input$select_metric]]
+      
+      fig <- violin_metric_region() %>%
+        plot_ly(
+          x = ~Year,
+          y = ~y_axis,
+          split = ~Year,
+          color = ~Year,
+          colors = c( "#999999", "#008000"),
+          type = 'violin',
+          box = list(visible = T),
+          meanline = list(visible = T)) 
+      
+      fig <- fig %>%
+        layout(
+          title = as.character(input$metric_region),
+          xaxis = list(title = "Year"),
+          yaxis = list(title = as.character(input$select_metric),
+                       zeroline = F))
+      
+      fig
+      
+    })
 }
 
 # Run the app ----
